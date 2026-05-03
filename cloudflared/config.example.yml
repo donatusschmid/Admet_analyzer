@@ -1,0 +1,11 @@
+# Kopie: cp config.example.yml config.yml  und Werte anpassen.
+# credentials-file: Pfad aus der Ausgabe von: cloudflared tunnel create admet-analyzer
+# tunnel: Tunnel-UUID ODER Tunnel-Name (je nach cloudflared-Version, siehe README)
+
+tunnel: ERSETZEN_TUNNEL_UUID
+credentials-file: /Users/donatusschmid/.cloudflared/ERSETZEN_TUNNEL_UUID.json
+
+ingress:
+  - hostname: admet.dschmid.cc
+    service: http://127.0.0.1:8504
+  - service: http_status:404
