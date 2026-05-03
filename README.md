@@ -24,13 +24,7 @@ streamlit run app/main.py
 
 Im Projektroot ausführen.
 
-### Port 8504 & Cloudflare Tunnel (`admet.dschmid.cc`)
-
-```bash
-streamlit run app/main.py --server.port 8504 --server.address 127.0.0.1
-```
-
-Öffentlicher Zugriff über **Cloudflare Tunnel**: Anleitung und DNS-Befehl in **[cloudflared/README.md](cloudflared/README.md)**.
+Öffentlicher Zugriff z. B. mit **Port 8504** und Hostname **`admet.dschmid.cc`**: Eintrag in **`~/.cloudflared/config.yml`** (Ingress auf diesen Port) und passender DNS/CNAME zum laufenden Tunnel — siehe deine zentrale cloudflared-Konfiguration.
 
 ## Hinweis
 

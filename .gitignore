@@ -12,7 +12,3 @@ __pycache__/
 .idea/
 .vscode/
 *.log
-
-# Cloudflare Tunnel (lokal, mit Geheimnissen)
-cloudflared/config.yml
-cloudflared/*.json
