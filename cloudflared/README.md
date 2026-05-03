@@ -44,6 +44,10 @@ Lokale Datei **`cloudflared/config.yml`** (nicht im Git) ist dafür vorkonfiguri
 
 ## 3. Konfiguration im Projekt
 
+**Richtige Datei:** `admet-streamlit-analyzer/cloudflared/config.yml` (im Repo-Ordner, **nicht** automatisch `~/.cloudflared/config.yml`).
+
+Der Hostname **`admet.dschmid.cc`** steht dort unter **`ingress:`** als `hostname:` (siehe auch `config.example.yml`).
+
 ```bash
 cd /pfad/zu/admet-streamlit-analyzer/cloudflared
 cp config.example.yml config.yml

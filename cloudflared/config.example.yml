@@ -1,6 +1,11 @@
-# Kopie: cp config.example.yml config.yml  und Werte anpassen.
-# credentials-file: Pfad aus der Ausgabe von: cloudflared tunnel create admet-analyzer
-# tunnel: Tunnel-UUID ODER Tunnel-Name (je nach cloudflared-Version, siehe README)
+# Vorlage → kopieren nach config.yml (liegt im GLEICHEN Ordner cloudflared/)
+#   cp config.example.yml config.yml
+# Dann tunnel + credentials-file ersetzen. Der Hostname steht unten unter ingress:
+#
+#   hostname: admet.dschmid.cc
+#
+# NICHT verwechseln mit ~/.cloudflared/config.yml (globale cloudflared-Datei) —
+# dort muss admet.dschmid.cc nicht stehen, wenn du mit --config dieses Projekt startest.
 
 tunnel: ERSETZEN_TUNNEL_UUID
 credentials-file: /Users/donatusschmid/.cloudflared/ERSETZEN_TUNNEL_UUID.json
