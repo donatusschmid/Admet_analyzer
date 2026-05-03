@@ -2,7 +2,8 @@
 
 Streamlit-App zum Vergleich von **SwissADME**, **ADMETlab 3.0** und **pkCSM** für einzelne SMILES oder per Batch (CSV/TXT). Ergebnisse optional als formatierte Excel-Datei.
 
-Ausführliches **Bedienungshandbuch:** [USER_MANUAL.md](USER_MANUAL.md).
+- **Reines Anwenderhandbuch (ohne Technik):** [ANWENDERHANDBUCH.md](ANWENDERHANDBUCH.md)  
+- **Technisches Handbuch:** [USER_MANUAL.md](USER_MANUAL.md)
 
 ## Voraussetzungen
 

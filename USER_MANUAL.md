@@ -1,5 +1,7 @@
 # Admet_analyzer – User Manual
 
+**Rein anwenderorientiert (ohne technische Projekt-Details):** [ANWENDERHANDBUCH.md](ANWENDERHANDBUCH.md)
+
 ## 1. Zweck
 
 **Admet_analyzer** ist eine **Streamlit-Webanwendung**, die für eine oder mehrere **SMILES**-Strukturen nacheinander drei öffentliche Webdienste aufruft:
@@ -140,4 +142,5 @@ Wenn du z. B. **`admet.dschmid.cc`** nutzt: In **`~/.cloudflared/config.yml`** m
 
 ## 11. Weitere Dokumentation
 
-- **README.md** – Installation, Start, Kurz-Hinweise zu Cloudflare
+- **README.md** – Installation, Start, Kurz-Hinweise zu Cloudflare  
+- **ANWENDERHANDBUCH.md** – Bedienung für Endnutzer ohne Technik-Hintergrund
