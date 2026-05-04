@@ -12,7 +12,7 @@ def parse_smiles_upload(file_name: str, raw_bytes: bytes) -> list[tuple[str, str
     Return list of (compound_id, smiles).
 
     - .csv: column smiles/SMILES/smile (or first column); optional id/name/compound_id.
-    - .txt / .smi: one SMILES per non-empty line; # starts a comment line.
+    - .txt / .smi / .batch: one SMILES per non-empty line; # starts a comment line.
     """
     text = raw_bytes.decode("utf-8", errors="replace")
     name = (file_name or "").lower()

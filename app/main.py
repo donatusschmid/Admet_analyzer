@@ -59,6 +59,26 @@ st.caption(
     "Löslichkeits-Modelle nutzen unterschiedliche Skalen — Werte sind roh wie von der jeweiligen Seite übernommen."
 )
 
+
+def _ui_runtime_hints(tab_kurz: str) -> None:
+    """Klare Erwartungen: Dauer, wo gerechnet wird, Mobil/Sleep."""
+    with st.expander(
+        f"Hinweise: Laufzeit, Mobilgerät, wo die Berechnung läuft ({tab_kurz})",
+        expanded=False,
+    ):
+        st.markdown(
+            """
+1. **Wo wird gerechnet?** Auf dem Rechner oder Server, auf dem diese App mit `streamlit run` läuft — **nicht** im Handy-Browser. Der Browser zeigt nur die Oberfläche.
+
+2. **Dauer:** Pro Molekül laufen **drei** Web-Tools nacheinander (SwissADME → ADMETlab → pkCSM). Das kann **mehrere Minuten** dauern; der Fortschrittsbalken zeigt den **Zwischenstand** (Schritte 1/5 … 5/5).
+
+3. **Smartphone / Tablet:** Geht das Gerät in den **Ruhezustand** oder wird der Tab stark gedrosselt, kann die Verbindung zur App abbrechen — dann fehlen ggf. Ergebnisse oder es erscheint ein Verbindungsfehler. Für zuverlässige Läufe: **Bildschirm wach halten** (z. B. eingesteckt) oder einen **Desktop-Browser** nutzen.
+
+4. **Laptop als Server:** Wenn hier Streamlit läuft: **Energiesparmodus, Deckel zu** oder Sleep können den Prozess stoppen — während eines Laufs den Rechner **wach** lassen.
+            """.strip()
+        )
+
+
 tab_single, tab_batch = st.tabs(["Einzelmolekül", "Batch (Datei)"])
 
 
@@ -101,6 +121,8 @@ def _show_single_result(results: dict) -> None:
 
 
 with tab_single:
+    _ui_runtime_hints("Einzelmolekül")
+
     if "smiles_input" not in st.session_state:
         st.session_state.smiles_input = ""
 
@@ -120,12 +142,15 @@ with tab_single:
         if not (smiles or "").strip():
             st.warning("Bitte SMILES eingeben oder Beispiel laden.")
         else:
+            progress = st.progress(0.0, text="Start …")
             try:
-                with st.spinner(
-                    "SwissADME, ADMETlab und pkCSM nacheinander — kann einige Minuten dauern …"
-                ):
-                    results = run_pipeline(smiles)
+
+                def _on_progress(frac: float, msg: str) -> None:
+                    progress.progress(frac, text=msg)
+
+                results = run_pipeline(smiles, on_progress=_on_progress)
             except Exception as e:
+                progress.progress(0.0, text="Abgebrochen / Fehler.")
                 st.error(f"Unerwarteter Fehler: {e}")
                 st.stop()
             st.session_state["last_single_results"] = results
@@ -134,18 +159,21 @@ with tab_single:
         _show_single_result(st.session_state["last_single_results"])
 
 with tab_batch:
+    _ui_runtime_hints("Batch")
+
     st.markdown(
         "**Batch:** CSV (Spalte `smiles` / `SMILES` oder erste Spalte), optional `id` / `name` / `compound_id` — "
-        "oder **TXT/SMI** (eine SMILES pro Zeile, `#` Kommentar)."
+        "oder **TXT/SMI/.batch** (eine SMILES pro Zeile, `#` Kommentar)."
     )
     st.warning(
-        "Jede Zeile löst nacheinander alle drei Web-Tools aus — rechnen Sie mit **mehreren Minuten pro Verbindung**."
+        "Jede Zeile löst nacheinander alle drei Web-Tools aus — rechnen Sie mit **mehreren Minuten pro Verbindung**. "
+        "Der Fortschrittsbalken zeigt **Struktur x/y** und den **Zwischenstand** innerhalb jedes Laufs (1/5 … 5/5)."
     )
 
     up = st.file_uploader(
         "SMILES-Datei",
-        type=["csv", "txt", "smi"],
-        help="UTF-8. Bei CSV: SMILES-Spalte oder erste Spalte.",
+        type=["csv", "txt", "smi", "batch"],
+        help="UTF-8. Bei CSV: SMILES-Spalte oder erste Spalte. .batch wie TXT (eine SMILES pro Zeile).",
     )
     max_n = st.number_input(
         "Max. Anzahl Strukturen (Abschneiden)",
@@ -166,14 +194,29 @@ with tab_batch:
             pairs = pairs[:max_n]
 
         rows = []
+        n_pairs = len(pairs)
         progress = st.progress(0.0, text="Start …")
         for i, (cid, smi) in enumerate(pairs):
-            progress.progress(
-                i / len(pairs),
-                text=f"({i + 1}/{len(pairs)}) {cid} …",
-            )
+            base = i / n_pairs
+            span = 1.0 / n_pairs
+
+            def _on_batch_progress(
+                frac: float,
+                msg: str,
+                _base=base,
+                _span=span,
+                _idx=i,
+                _label=cid,
+                _total=n_pairs,
+            ) -> None:
+                progress.progress(
+                    min(1.0, _base + frac * _span),
+                    text=f"Struktur {_idx + 1}/{_total} ({_label}) — {msg}",
+                )
+
+            _on_batch_progress(0.0, "Start …")
             try:
-                res = run_pipeline(smi)
+                res = run_pipeline(smi, on_progress=_on_batch_progress)
             except Exception as e:
                 res = {
                     "errors": {
